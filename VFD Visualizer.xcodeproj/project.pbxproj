@@ -13,6 +13,7 @@
 		058ABEEE2F1AC2F9003F90A2 /* VFDShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEED2F1AC2F9003F90A2 /* VFDShaders.metal */; };
 		058ABEF02F1AC46F003F90A2 /* MetalVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEEF2F1AC46F003F90A2 /* MetalVisualizerView.swift */; };
 		058ABEF22F1AC498003F90A2 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEF12F1AC498003F90A2 /* Renderer.swift */; };
+		058ABF222F1ECC0B003F90A2 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 058ABF212F1ECC0B003F90A2 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		058ABEEF2F1AC46F003F90A2 /* MetalVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVisualizerView.swift; sourceTree = "<group>"; };
 		058ABEF12F1AC498003F90A2 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		058ABEF32F1D4073003F90A2 /* DSPEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DSPEngine.hpp; sourceTree = "<group>"; };
+		058ABF212F1ECC0B003F90A2 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -93,6 +95,7 @@
 		058ABEA72F19113F003F90A2 = {
 			isa = PBXGroup;
 			children = (
+				058ABF212F1ECC0B003F90A2 /* .gitignore */,
 				058ABEB22F19113F003F90A2 /* VFD Visualizer */,
 				058ABEC02F191142003F90A2 /* VFD VisualizerTests */,
 				058ABECA2F191142003F90A2 /* VFD VisualizerUITests */,
@@ -240,6 +243,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				058ABF222F1ECC0B003F90A2 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
