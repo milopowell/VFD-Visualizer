@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		058ABEE42F191A47003F90A2 /* DSPEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEE32F191A47003F90A2 /* DSPEngine.mm */; };
+		058ABEE82F191E58003F90A2 /* DSPEngineWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEE72F191E58003F90A2 /* DSPEngineWrapper.mm */; };
+		058ABEEC2F1A6781003F90A2 /* CaptureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEEB2F1A6781003F90A2 /* CaptureManager.swift */; };
+		058ABEEE2F1AC2F9003F90A2 /* VFDShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEED2F1AC2F9003F90A2 /* VFDShaders.metal */; };
+		058ABEF02F1AC46F003F90A2 /* MetalVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEEF2F1AC46F003F90A2 /* MetalVisualizerView.swift */; };
+		058ABEF22F1AC498003F90A2 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058ABEF12F1AC498003F90A2 /* Renderer.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		058ABEBE2F191142003F90A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +36,15 @@
 		058ABEB02F19113F003F90A2 /* VFD Visualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "VFD Visualizer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		058ABEBD2F191142003F90A2 /* VFD VisualizerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFD VisualizerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		058ABEC72F191142003F90A2 /* VFD VisualizerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "VFD VisualizerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		058ABEDC2F191990003F90A2 /* VFD Visualizer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VFD Visualizer-Bridging-Header.h"; sourceTree = "<group>"; };
+		058ABEE32F191A47003F90A2 /* DSPEngine.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DSPEngine.mm; sourceTree = "<group>"; };
+		058ABEE62F191E39003F90A2 /* DSPEngineWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPEngineWrapper.h; sourceTree = "<group>"; };
+		058ABEE72F191E58003F90A2 /* DSPEngineWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DSPEngineWrapper.mm; sourceTree = "<group>"; };
+		058ABEEB2F1A6781003F90A2 /* CaptureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureManager.swift; sourceTree = "<group>"; };
+		058ABEED2F1AC2F9003F90A2 /* VFDShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VFDShaders.metal; sourceTree = "<group>"; };
+		058ABEEF2F1AC46F003F90A2 /* MetalVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVisualizerView.swift; sourceTree = "<group>"; };
+		058ABEF12F1AC498003F90A2 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		058ABEF32F1D4073003F90A2 /* DSPEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DSPEngine.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +97,15 @@
 				058ABEC02F191142003F90A2 /* VFD VisualizerTests */,
 				058ABECA2F191142003F90A2 /* VFD VisualizerUITests */,
 				058ABEB12F19113F003F90A2 /* Products */,
+				058ABEDC2F191990003F90A2 /* VFD Visualizer-Bridging-Header.h */,
+				058ABEE62F191E39003F90A2 /* DSPEngineWrapper.h */,
+				058ABEE72F191E58003F90A2 /* DSPEngineWrapper.mm */,
+				058ABEEB2F1A6781003F90A2 /* CaptureManager.swift */,
+				058ABEED2F1AC2F9003F90A2 /* VFDShaders.metal */,
+				058ABEEF2F1AC46F003F90A2 /* MetalVisualizerView.swift */,
+				058ABEF12F1AC498003F90A2 /* Renderer.swift */,
+				058ABEF32F1D4073003F90A2 /* DSPEngine.hpp */,
+				058ABEE32F191A47003F90A2 /* DSPEngine.mm */,
 			);
 			sourceTree = "<group>";
 		};
@@ -175,6 +202,7 @@
 				TargetAttributes = {
 					058ABEAF2F19113F003F90A2 = {
 						CreatedOnToolsVersion = 26.2;
+						LastSwiftMigration = 2620;
 					};
 					058ABEBC2F191142003F90A2 = {
 						CreatedOnToolsVersion = 26.2;
@@ -236,6 +264,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				058ABEF02F1AC46F003F90A2 /* MetalVisualizerView.swift in Sources */,
+				058ABEE42F191A47003F90A2 /* DSPEngine.mm in Sources */,
+				058ABEEC2F1A6781003F90A2 /* CaptureManager.swift in Sources */,
+				058ABEEE2F1AC2F9003F90A2 /* VFDShaders.metal in Sources */,
+				058ABEE82F191E58003F90A2 /* DSPEngineWrapper.mm in Sources */,
+				058ABEF22F1AC498003F90A2 /* Renderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,15 +428,27 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8YX5RHM93J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = YES;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "VFD-Visualizer-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -416,6 +462,8 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "VFD Visualizer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -426,15 +474,27 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8YX5RHM93J;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = YES;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "VFD-Visualizer-Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -448,6 +508,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "VFD Visualizer-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
