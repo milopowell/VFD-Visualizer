@@ -15,7 +15,8 @@ struct VisualizerUniforms {
     float3 inactiveColor;
     int numBars;
     float showPeaks; // 1.0 for true, 0.0 for false
-    float2 padding;
+    float barSpacing;
+    float padding;
 };
 
 // Ensures the vertex output matches the fragment input
@@ -55,8 +56,9 @@ fragment float4 vfd_fragment(RasterData in [[stage_in]],
 {
     float2 uv = in.uv;
     
-    // Get the bar index (0 to numBars - 1)
-    int barIndex = clamp(int(uv.x * float(theme.numBars)), 0, theme.numBars - 1);
+    // Collect bar index once
+    float numBarsF = float(theme.numBars);
+    int barIndex = clamp(int(uv.x * numBarsF), 0, theme.numBars - 1);
     
     // Collect amplitude & peaks for each bar
     float amplitude = magnitudes[barIndex];

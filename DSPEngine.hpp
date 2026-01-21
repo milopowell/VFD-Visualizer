@@ -25,7 +25,18 @@ private:
     std::vector<float> window;        // Hann window to smooth edges
     std::vector<float> realPart;      // Internal FFT buffer
     std::vector<float> imagPart;      // Internal FFT buffer
-    std::vector<float> accumulationBuffer;
+    std::vector<float> magnitudes;    // Pre-allocated magnitude buffer (new)
+    
+    // Ring buffer for sample accumulation
+    std::vector<float> ringBuffer;
+    int ringBufferWritePos;
+    int ringBufferSize;
+    int samplesInBuffer;
+    
+    // Throttling for FFT processing
+    std::chrono::steady_clock::time_point lastFFTTime;
+    int targetFPS;
+    int minFrameInterval; // Milliseconds
 
 public:
     DSPEngine(int size);
