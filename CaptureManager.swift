@@ -32,11 +32,24 @@ class CaptureManager: NSObject, ObservableObject, SCStreamOutput {
     }
 
     let audioEngine = DSPEngineWrapper(size: 64)
-    @Published var isRecording: Bool = false
+    @Published var isRecording: Bool = false {
+        didSet {
+            if !isRecording {
+                // Start decay when offline
+                startDecay()
+            } else {
+                // Stop decay when online
+                stopDecay()
+            }
+        }
+    }
+    
+    
     private var stream: SCStream?
+    private var decayTimer: Timer?
     
     // Helper to store converted float data to avoid re-allocating every frame
-    private var conversionBuffer = [Float]()
+    //private var conversionBuffer = [Float]()
     
     func stopStream() {
         Task {
@@ -103,6 +116,41 @@ class CaptureManager: NSObject, ObservableObject, SCStreamOutput {
             self.audioEngine?.processAudioSamples(floatPtr, count: Int32(sampleCount))
         }
     }
-}
+    
+    // Decay animation
+    private func startDecay() {
+        // Run decay at 60fps
+        decayTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { [weak self] _ in self?.applyDecay()
+        }
+    }
+    
+    private func stopDecay() {
+        decayTimer?.invalidate()
+        decayTimer = nil
+    }
+    
+    private func applyDecay() {
+        guard let engine = audioEngine,
+        let freqPtr = engine.frequencyBuffer,
+        let peakPtr = engine.peakBuffer else { return }
 
+        let count = Int(engine.numberOfBars)
+        
+        // Decay frequency bars
+        for i in 0..<count {
+            if freqPtr[i] > 0 {
+                freqPtr[i] -= Float(gravity) * 2.0 // Decay rate
+                if freqPtr[i] < 0 { freqPtr[i] = 0 }
+            }
+        }
+        
+        // Decay peaks
+        for i in 0..<count {
+            if peakPtr[i] > 0 {
+                peakPtr[i] -= Float(gravity)
+                if peakPtr[i] < 0 { peakPtr[i] = 0 }
+            }
+        }
+    }
+}
 

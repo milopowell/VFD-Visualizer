@@ -11,7 +11,7 @@ import MetalKit
 
 struct MetalVisualizerView: NSViewRepresentable {
     @ObservedObject var captureManager: CaptureManager
-    var isDarkMode: Bool
+    var theme: ColorTheme
 
     func makeNSView(context: Context) -> MTKView {
         let mtkView = MTKView()
@@ -26,10 +26,10 @@ struct MetalVisualizerView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: MTKView, context: Context) {
-        context.coordinator.isDarkMode = isDarkMode
+        context.coordinator.theme = theme
     }
 
     func makeCoordinator() -> Renderer {
-        Renderer(captureManager: captureManager)
+        Renderer(captureManager: captureManager, theme: theme)
     }
 }

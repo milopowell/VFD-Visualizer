@@ -24,15 +24,16 @@ class Renderer: NSObject, MTKViewDelegate {
     var device: MTLDevice?
     var commandQueue: MTLCommandQueue?
     var pipelineState: MTLRenderPipelineState?
-    var isDarkMode: Bool = true
+    var theme: ColorTheme
     
     // Frame rate limiting
     private var lastRenderTime: CFTimeInterval = 0
     private let targetFPS: Double = 60
     private let minFrameInterval: CFTimeInterval
     
-    init(captureManager: CaptureManager) {
+    init(captureManager: CaptureManager, theme: ColorTheme) {
         self.captureManager = captureManager
+        self.theme = theme
         self.device = MTLCreateSystemDefaultDevice()
         self.commandQueue = device?.makeCommandQueue()
         self.minFrameInterval = 1.0 / targetFPS
@@ -90,26 +91,15 @@ class Renderer: NSObject, MTKViewDelegate {
         // Pass the uniforms (1)
         let barSpacing = 1.0 / Float(captureManager.numBars)
         
-        let uniforms: VisualizerUniforms
-        if isDarkMode {
-            uniforms = VisualizerUniforms(
-                activeColorLow: SIMD3<Float>(0.0, 1.0, 1.0), // Cyan
-                activeColorHigh: SIMD3<Float>(1.0, 0.0, 0.0), // Red
-                inactiveColor: SIMD3<Float>(0.0, 0.0, 0.1), // Dark blue
-                numBars: Int32(captureManager.numBars),
-                showPeaks: captureManager.showPeaks ? 1.0 : 0.0,
-                barSpacing: barSpacing
+        let uniforms = VisualizerUniforms(
+            activeColorLow: theme.activeColorLow,
+            activeColorHigh: theme.activeColorHigh,
+            inactiveColor: theme.inactiveColor,
+            numBars: Int32(captureManager.numBars),
+            showPeaks: captureManager.showPeaks ? 1.0 : 0.0,
+            barSpacing: barSpacing
             )
-        } else {
-            uniforms = VisualizerUniforms(
-                activeColorLow: SIMD3<Float>(0.0, 0.4, 0.8), // Deep blue
-                activeColorHigh: SIMD3<Float>(0.5, 0.0, 0.5), // Purple
-                inactiveColor: SIMD3<Float>(0.9, 0.9, 0.9), // Light Grey
-                numBars: Int32(captureManager.numBars),
-                showPeaks: captureManager.showPeaks ? 1.0 : 0.0,
-                barSpacing: barSpacing
-            )
-        }
+
         
         var localUniforms = uniforms
         encoder.setFragmentBytes(&localUniforms, length: MemoryLayout<VisualizerUniforms>.size, index: 1)
