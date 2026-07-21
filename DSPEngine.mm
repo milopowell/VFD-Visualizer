@@ -6,6 +6,7 @@
 //
 
 #include "DSPEngine.hpp"
+#include <algorithm>
 #include <cmath>
 
 // Constructor
@@ -18,18 +19,21 @@ DSPEngine::DSPEngine(int size) {
     ringBuffer.assign(ringBufferSize, 0.0f);
     ringBufferWritePos = 0;
     samplesInBuffer = 0;
-    
+
     // Throttling setup
     targetFPS = 60;
     minFrameInterval = 1000 / targetFPS;
     lastFFTTime = std::chrono::steady_clock::now();
-    
+
     // Create the FFT setup object
     fftSetup = vDSP_create_fftsetup(log2n, kFFTRadix2);
-    
-    frequencyData.assign(64, 0.0f); // Previous size
-    peakData.assign(64, 0.0f);      // Previous size
-    peakTimers.assign(64, 0);       // Previous size
+
+    maxBars = size > 0 ? size : 64;
+    numBars = std::min(numBars, maxBars);
+
+    frequencyData.assign(maxBars, 0.0f);
+    peakData.assign(maxBars, 0.0f);
+    peakTimers.assign(maxBars, 0);
     window.assign(fftSize, 0.0f);
     realPart.assign(fftSize / 2, 0.0f);
     imagPart.assign(fftSize / 2, 0.0f);
@@ -45,6 +49,11 @@ DSPEngine::DSPEngine(int size) {
 // Destructor
 DSPEngine::~DSPEngine() {
     vDSP_destroy_fftsetup(fftSetup);
+}
+
+// Clamp to the pre-allocated buffer capacity so performFFT never writes out of bounds
+void DSPEngine::setNumBars(int bars) {
+    numBars = std::max(1, std::min(bars, maxBars));
 }
 
 // Perform FFT

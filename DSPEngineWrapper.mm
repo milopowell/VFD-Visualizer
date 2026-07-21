@@ -17,8 +17,7 @@
 - (instancetype)initWithSize:(int)size {
     self = [super init];
     if (self) {
-        _cppEngine = new DSPEngine(64);
-        //_barCount = size;
+        _cppEngine = new DSPEngine(size);
     }
     return self;
 }
@@ -49,7 +48,7 @@
 }
 
 - (void)setNumBars:(int)numBars {
-    _cppEngine->numBars = numBars;
+    _cppEngine->setNumBars(numBars);
 }
 
 - (float *)frequencyBuffer {
@@ -58,6 +57,10 @@
 
 - (float *)peakBuffer {
     return _cppEngine->getPeakDataPointer();
+}
+
+- (int)numberOfBars {
+    return _cppEngine->getNumBars();
 }
 
 @end

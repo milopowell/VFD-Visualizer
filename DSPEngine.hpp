@@ -18,7 +18,10 @@ private:
     int log2n;
     FFTSetup fftSetup;
     DSPSplitComplex splitComplex;
-    
+
+    int maxBars;                      // Capacity of frequencyData/peakData/peakTimers
+    int numBars = 32;                 // Active bars actually rendered (<= maxBars)
+
     std::vector<float> frequencyData; // Results for the shader
     std::vector<float> peakData;      // Falling caps
     std::vector<float> peakTimers;    // Duration before caps fall
@@ -45,14 +48,16 @@ public:
     
     float* getFrequencyDataPointer() { return frequencyData.data(); }
     float* getPeakDataPointer() { return peakData.data(); }
-    
-    
+
+    void setNumBars(int bars);
+    int getNumBars() const { return numBars; }
+    int getMaxBars() const { return maxBars; }
+
     // Default values; can be manipulated by user
     float gain = 20.0f;
     float smoothing = 0.70f;
     float gravity = 0.005f;
     int peakHoldTime = 30;
-    int numBars = 32;
 
 };
 
