@@ -92,28 +92,10 @@ class CaptureManager: NSObject, ObservableObject, SCStreamOutput {
     
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         guard type == .audio else { return }
-        
-        // "Bridge" btwn macos and samples
-        guard let blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) else { return }
-        
-        // Get the format description to check sample rate/bits
-        guard let formatDesc = CMSampleBufferGetFormatDescription(sampleBuffer),
-              let _ = CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc)?.pointee else { return }
 
-        var length = 0
-        var totalLength = 0
-        var dataPointer: UnsafeMutablePointer<Int8>?
-        
-        // Access the raw data directly from the BlockBuffer
-        let status = CMBlockBufferGetDataPointer(blockBuffer, atOffset: 0, lengthAtOffsetOut: &length, totalLengthOut: &totalLength, dataPointerOut: &dataPointer)
-        
-        if status == noErr, let rawData = dataPointer {
-            // ScreenCaptureKit provides floats if configured correctly
-            let floatPtr = rawData.withMemoryRebound(to: Float.self, capacity: totalLength / MemoryLayout<Float>.size) { $0 }
-            let sampleCount = totalLength / MemoryLayout<Float>.size
-            
+        withMonoSamples(in: sampleBuffer) { samples in
             // Pass to C++ Engine
-            self.audioEngine?.processAudioSamples(floatPtr, count: Int32(sampleCount))
+            self.audioEngine?.processAudioSamples(samples.baseAddress, count: Int32(samples.count))
         }
     }
     
@@ -154,3 +136,42 @@ class CaptureManager: NSObject, ObservableObject, SCStreamOutput {
     }
 }
 
+// Calls `body` with one mono channel of audio. The FFT needs a single continuous
+// signal, so the channels are averaged whether they arrive planar (one buffer per
+// channel) or interleaved (one buffer of LRLR...).
+func withMonoSamples(in sampleBuffer: CMSampleBuffer, body: (UnsafeMutableBufferPointer<Float>) -> Void) {
+    let frameCount = CMSampleBufferGetNumSamples(sampleBuffer)
+    
+    guard frameCount > 0,
+          let formatDesc = CMSampleBufferGetFormatDescription(sampleBuffer),
+          let format = CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc)?.pointee,
+          format.mFormatFlags & kAudioFormatFlagIsFloat != 0,
+          format.mBitsPerChannel == 32 else { return }
+    
+    try? sampleBuffer.withAudioBufferList { buffers, _ in
+        withUnsafeTemporaryAllocation(of: Float.self, capacity: frameCount) { mono in
+            mono.initialize(repeating: 0)
+            var totalChannels = 0
+            
+            for buffer in buffers {
+                guard let data = buffer.mData, buffer.mNumberChannels > 0 else { continue }
+                let samples = data.assumingMemoryBound(to: Float.self)
+                let channels = Int(buffer.mNumberChannels)
+                let frames = min(frameCount, Int(buffer.mDataByteSize) / (MemoryLayout<Float>.size * channels))
+                
+                for frame in 0..<frames {
+                    for channel in 0..<channels {
+                        mono[frame] += samples[frame * channels + channel]
+                    }
+                }
+                totalChannels += channels
+            }
+            
+            guard totalChannels > 0 else { return }
+            for frame in 0..<frameCount {
+                mono[frame] /= Float(totalChannels)
+            }
+            body(mono)
+        }
+    }
+}
