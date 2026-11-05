@@ -6,6 +6,7 @@
 //
 
 #include "DSPEngine.hpp"
+#import "DSPEngineWrapper.h"
 #include <algorithm>
 #include <cmath>
 
@@ -109,8 +110,8 @@ void DSPEngine::performFFT(const float* inputBuffer, int incomingCount) {
     float binWidth = sampleRate / (float)fftSize; // ~11.7Hz binWidth
     
     for (int i = 0; i < numBars; i++) {
-        float startFreq = 20.0f * powf(20000.0f / 20.0f, (float)i / numBars);
-        float endFreq = 20.0f * powf(20000.0f / 20.0f, (float)(i + 1) / numBars);
+        float startFreq = VFD_MIN_FREQUENCY * powf(VFD_MAX_FREQUENCY / VFD_MIN_FREQUENCY, (float)i / numBars);
+        float endFreq = VFD_MIN_FREQUENCY * powf(VFD_MAX_FREQUENCY / VFD_MIN_FREQUENCY, (float)(i + 1) / numBars);
         
         int startBin = (int)(startFreq / binWidth);
         int endBin = (int)(endFreq / binWidth);

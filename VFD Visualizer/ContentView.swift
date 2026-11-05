@@ -183,9 +183,9 @@ struct ContentView: View {
         ]
         var theme: ColorTheme
         
-        // Position from 0 to 1 on the same 20Hz-20kHz log scale DSPEngine uses for its bars
+        // Position from 0 to 1 on the same log scale DSPEngine uses for its bars
         func position(of hz: Float) -> CGFloat {
-            CGFloat(log(hz / 20) / log(20000 / 20))
+            CGFloat(log(hz / VFD_MIN_FREQUENCY) / log(VFD_MAX_FREQUENCY / VFD_MIN_FREQUENCY))
         }
 
         var body: some View {

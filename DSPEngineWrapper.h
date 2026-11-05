@@ -10,6 +10,10 @@
 
 #import <Foundation/Foundation.h>
 
+// Frequency range the bars cover, shared by the DSP engine and the axis labels
+#define VFD_MIN_FREQUENCY 40.0f
+#define VFD_MAX_FREQUENCY 20000.0f
+
 @interface DSPEngineWrapper : NSObject
 
 @property (nonatomic, readonly) float *frequencyBuffer;
