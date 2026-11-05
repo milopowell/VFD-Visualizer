@@ -54,6 +54,7 @@ struct ContentView: View {
                 if showHzAxis {
                     FrequencyAxisView(theme: ColorTheme.themes[selectedTheme])
                         .frame(height: 30)
+                        .padding(.horizontal, showBorder ? 20 : 0) // Match the visualizer's width
                         .padding(.bottom, 10)
                 }
             }
@@ -176,20 +177,27 @@ struct ContentView: View {
 
 
     struct FrequencyAxisView: View {
-        let ticks = ["20Hz", "100Hz", "500Hz", "1kHz", "5kHz", "10kHz", "20kHz"]
+        let ticks: [(label: String, hz: Float)] = [
+            ("50Hz", 50), ("100Hz", 100), ("500Hz", 500),
+            ("1kHz", 1000), ("5kHz", 5000), ("10kHz", 10000)
+        ]
         var theme: ColorTheme
         
+        // Position from 0 to 1 on the same 20Hz-20kHz log scale DSPEngine uses for its bars
+        func position(of hz: Float) -> CGFloat {
+            CGFloat(log(hz / 20) / log(20000 / 20))
+        }
+
         var body: some View {
-            HStack {
-                ForEach(ticks, id: \.self) { tick in
-                    Text(tick)
+            GeometryReader { geometry in
+                ForEach(ticks, id: \.label) { tick in
+                    Text(tick.label)
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundColor(theme.accentColor.opacity(0.8))
                         .shadow(color: theme.accentColor.opacity(0.5), radius: 3)
-                    if tick != ticks.last { Spacer() }
+                        .position(x: position(of: tick.hz) * geometry.size.width, y: geometry.size.height / 2)
                 }
             }
-            .padding(.horizontal, 20)
         }
     }
         
