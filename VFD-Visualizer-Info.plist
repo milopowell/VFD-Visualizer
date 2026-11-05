@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Privacy - Screen Recording Usage Description</key>
+	<key>NSAudioCaptureUsageDescription</key>
 	<string>This app needs access to system audio to generate the visualizer</string>
 </dict>
 </plist>

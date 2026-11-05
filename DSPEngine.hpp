@@ -58,6 +58,7 @@ public:
     float smoothing = 0.70f;
     float gravity = 0.005f;
     int peakHoldTime = 30;
+    float sampleRate = 48000.0f; // Set from the capture device
 
 };
 

@@ -27,6 +27,7 @@
 -(void)setGravity:(float)gravity;
 -(void)setNumBars:(int)numBars;
 -(void)setHoldTime:(int)peakHoldTime;
+-(void)setSampleRate:(float)sampleRate;
 //-(void)setBaseline:(float)baseline;
 
 @end

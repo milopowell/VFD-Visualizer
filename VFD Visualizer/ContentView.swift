@@ -27,6 +27,9 @@ struct ContentView: View {
             VStack(spacing: 0){
                 HStack {
                     statusIndicator
+                    if let problem = captureManager.captureProblem {
+                        CaptureProblemView(problem: problem, theme: ColorTheme.themes[selectedTheme])
+                    }
                     Spacer()
                     if showCPU {
                         cpuIndicator
@@ -175,6 +178,33 @@ struct ContentView: View {
     }
 }
 
+struct CaptureProblemView: View {
+    let problem: CaptureProblem
+    var theme: ColorTheme
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(problem.message)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundColor(theme.accentColor)
+                .lineLimit(2)
+            if problem == .noAudioYet {
+                Button(action: {
+                    NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
+                }) {
+                    Text("Open Settings")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(theme.accentColor)
+                        .fixedSize()
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(theme.accentColor, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
 
     struct FrequencyAxisView: View {
         let ticks: [(label: String, hz: Float)] = [

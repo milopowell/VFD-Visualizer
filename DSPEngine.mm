@@ -106,8 +106,7 @@ void DSPEngine::performFFT(const float* inputBuffer, int incomingCount) {
     
     
     // Logarithmic mapping
-    float sampleRate = 48000.0f;
-    float binWidth = sampleRate / (float)fftSize; // ~11.7Hz binWidth
+    float binWidth = sampleRate / (float)fftSize; // ~11.7Hz at 48kHz
     
     for (int i = 0; i < numBars; i++) {
         float startFreq = VFD_MIN_FREQUENCY * powf(VFD_MAX_FREQUENCY / VFD_MIN_FREQUENCY, (float)i / numBars);
@@ -119,7 +118,9 @@ void DSPEngine::performFFT(const float* inputBuffer, int incomingCount) {
         if (endBin > fftSize / 2) endBin = fftSize / 2;
         
         float maxVal = 0.0f;
-        vDSP_maxv(&magnitudes[startBin], 1, &maxVal, endBin - startBin);
+        if (startBin < endBin) { // Bars above the device's top frequency stay empty
+            vDSP_maxv(&magnitudes[startBin], 1, &maxVal, endBin - startBin);
+        }
         
         // Normalize using log scale
         float db = 10.0f * log10(maxVal + 1e-6f);

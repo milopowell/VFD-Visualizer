@@ -47,6 +47,10 @@
     _cppEngine->peakHoldTime = peakHoldTime;
 }
 
+- (void)setSampleRate:(float)sampleRate {
+    _cppEngine->sampleRate = sampleRate;
+}
+
 - (void)setNumBars:(int)numBars {
     _cppEngine->setNumBars(numBars);
 }
