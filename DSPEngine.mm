@@ -124,6 +124,7 @@ void DSPEngine::performFFT(const float* inputBuffer, int incomingCount) {
         // Normalize using log scale
         float db = 10.0f * log10(maxVal + 1e-6f);
         float normalized = (db - 20.0f + gain) / 60.0f; // Change 20.0f to tweak average gain
+        normalized = std::clamp(normalized, 0.0f, 1.0f); // Keep bars and peak caps on the display
         
         // Smoothing
         frequencyData[i] = (frequencyData[i] * smoothing) + (normalized * (1.0f - smoothing));
