@@ -51,6 +51,7 @@ class CaptureManager: NSObject, ObservableObject {
     // How long to wait for any sound before suggesting that permission may be off
     var noAudioHintDelay: TimeInterval = 5
     private var heardAudio = false
+    private var captureAttempt = 0
 
     private var defaultOutputAddress = AudioObjectPropertyAddress(
         mSelector: kAudioHardwarePropertyDefaultOutputDevice,
@@ -70,17 +71,33 @@ class CaptureManager: NSObject, ObservableObject {
     }
 
     func stopStream() {
+        captureAttempt += 1 // Cancels any start still in progress
         tap?.stop()
         tap = nil
         captureProblem = nil
         if isRecording { isRecording = false }
     }
 
-    func startStream() async {
-        await MainActor.run {
-            self.captureProblem = nil
-            self.heardAudio = false
+    func beginCaptureAttempt() -> Int {
+        captureAttempt += 1
+        captureProblem = nil
+        heardAudio = false
+        return captureAttempt
+    }
+
+    // Setting up a tap takes time, so it may have been stopped or restarted by the time it's ready
+    func finishCaptureAttempt(_ attempt: Int, with newTap: SystemAudioTap) {
+        guard attempt == captureAttempt else {
+            newTap.stop()
+            return
         }
+        tap = newTap
+        isRecording = true
+        watchForSilence()
+    }
+
+    func startStream() async {
+        let attempt = await MainActor.run { self.beginCaptureAttempt() }
         do {
             let newTap = try SystemAudioTap()
             audioEngine?.setSampleRate(Float(newTap.sampleRate))
@@ -97,17 +114,15 @@ class CaptureManager: NSObject, ObservableObject {
                 }
             }
 
-            await MainActor.run {
-                self.tap = newTap
-                self.isRecording = true
-                self.watchForSilence()
-            }
+            await MainActor.run { self.finishCaptureAttempt(attempt, with: newTap) }
         } catch {
-            await MainActor.run { self.handleCaptureFailure(error) }
+            await MainActor.run {
+                if attempt == self.captureAttempt { self.handleCaptureFailure(error) }
+            }
         }
     }
 
-    // A denied tap delivers silence rather than an error, and macOS has no public way
+    // A denied tap delivers silence rather than an error, and Core Audio has no public way
     // to ask for the permission's state, so a long silence is the only available signal.
     func watchForSilence() {
         DispatchQueue.main.asyncAfter(deadline: .now() + noAudioHintDelay) { [weak self] in
