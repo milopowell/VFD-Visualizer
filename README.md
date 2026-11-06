@@ -97,7 +97,16 @@ Metal fragment shader       Draws the segments, peak caps, and glow
 - Below about 100 Hz, the FFT's 11.7 Hz resolution is coarser than the bars, so neighboring bars can look alike at the 64-bar setting.
 - Averaging to mono means audio that is exactly out of phase between channels cancels out.
 - Output devices that aren't at 48 kHz are supported, but they've only been tested with simulated audio.
-- The repository has no automated tests.
+
+## Tests
+
+Press Cmd+U in Xcode to run the test suite. The tests never start capturing, so they don't need the System Audio Recording permission. They do need a Mac with an audio output device.
+
+To run them from the command line, quit the app first, because `xcodebuild` can hang after the tests finish if a copy is open:
+
+```bash
+xcodebuild test -project "VFD Visualizer.xcodeproj" -scheme "VFD Visualizer" -destination "platform=macOS"
+```
 
 ## License
 

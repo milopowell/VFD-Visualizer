@@ -30,7 +30,7 @@ class CaptureManager: NSObject, ObservableObject {
         didSet { audioEngine?.setHoldTime(Int32(peakHoldTime)) }
     }
 
-    let audioEngine = DSPEngineWrapper(size: 64) // Should cover the largest bar count in settings
+    let audioEngine: DSPEngineWrapper?
     @Published var isRecording: Bool = false {
         didSet {
             if !isRecording {
@@ -61,7 +61,9 @@ class CaptureManager: NSObject, ObservableObject {
         self?.restartAfterOutputChange()
     }
 
-    override init() {
+    // The capacity should cover the largest bar count in settings
+    init(barCapacity: Int32 = 64) {
+        audioEngine = DSPEngineWrapper(size: barCapacity)
         super.init()
         AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &defaultOutputAddress, .main, outputDeviceChanged)
     }
