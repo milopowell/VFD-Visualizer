@@ -30,7 +30,7 @@ class CaptureManager: NSObject, ObservableObject {
         didSet { audioEngine?.setHoldTime(Int32(peakHoldTime)) }
     }
 
-    let audioEngine = DSPEngineWrapper(size: 64)
+    let audioEngine = DSPEngineWrapper(size: 64) // Should cover the largest bar count in settings
     @Published var isRecording: Bool = false {
         didSet {
             if !isRecording {

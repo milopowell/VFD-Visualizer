@@ -67,4 +67,8 @@
     return _cppEngine->getNumBars();
 }
 
+- (int)maxBars {
+    return _cppEngine->getMaxBars();
+}
+
 @end

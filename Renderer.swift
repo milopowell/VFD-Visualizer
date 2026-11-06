@@ -75,7 +75,8 @@ class Renderer: NSObject, MTKViewDelegate {
         
         lastRenderTime = currentTime
         
-        guard let commandBuffer = commandQueue?.makeCommandBuffer(),
+        guard let engine = captureManager.audioEngine,
+              let commandBuffer = commandQueue?.makeCommandBuffer(),
               let descriptor = view.currentRenderPassDescriptor,
               let pipeline = pipelineState,
               let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else { return }
@@ -83,19 +84,19 @@ class Renderer: NSObject, MTKViewDelegate {
         encoder.setRenderPipelineState(pipeline)
 
         // Pass the audio data (0)
-        let maxBars = 64 // Current max bars
-        if let audioDataPtr = captureManager.audioEngine?.frequencyBuffer {
+        let maxBars = Int(engine.maxBars)
+        if let audioDataPtr = engine.frequencyBuffer {
             encoder.setFragmentBytes(audioDataPtr, length: MemoryLayout<Float>.size * maxBars, index: 0)
         }
         
         // Pass the uniforms (1)
-        let barSpacing = 1.0 / Float(captureManager.numBars)
+        let barSpacing = 1.0 / Float(engine.numberOfBars)
         
         let uniforms = VisualizerUniforms(
             activeColorLow: theme.activeColorLow,
             activeColorHigh: theme.activeColorHigh,
             inactiveColor: theme.inactiveColor,
-            numBars: Int32(captureManager.numBars),
+            numBars: engine.numberOfBars,
             showPeaks: captureManager.showPeaks ? 1.0 : 0.0,
             barSpacing: barSpacing
             )
@@ -105,7 +106,7 @@ class Renderer: NSObject, MTKViewDelegate {
         encoder.setFragmentBytes(&localUniforms, length: MemoryLayout<VisualizerUniforms>.size, index: 1)
         
         // Peak data (2)
-        if let peakDataPtr = captureManager.audioEngine?.peakBuffer {
+        if let peakDataPtr = engine.peakBuffer {
             encoder.setFragmentBytes(peakDataPtr, length: MemoryLayout<Float>.size * maxBars, index: 2)
         }
         

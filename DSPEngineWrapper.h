@@ -18,6 +18,7 @@
 
 @property (nonatomic, readonly) float *frequencyBuffer;
 @property (nonatomic, readonly) int numberOfBars;
+@property (nonatomic, readonly) int maxBars;
 @property (nonatomic, readonly) float *peakBuffer;
 
 -(instancetype)initWithSize:(int)size;
