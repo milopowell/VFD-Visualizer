@@ -107,9 +107,8 @@ struct ContentView: View {
                     .fill(captureManager.isRecording ? Color.green : Color.red)
                     .frame(width: 8, height: 8)
                     .shadow(color: captureManager.isRecording ? .green : .red, radius: 4)
-                Text(captureManager.isRecording ? "SYSTEM ACTIVE" : "OFFLINE")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(theme.accentColor)
+                // Status label in dot-matrix characters, like a VFD panel
+                DotMatrixText(text: captureManager.isRecording ? "SYSTEM ACTIVE" : "OFFLINE", color: theme.accentColor)
             }
             .padding(8)
             .cornerRadius(4)
@@ -120,9 +119,8 @@ struct ContentView: View {
         HStack(spacing: 4) {
             Image(systemName: "cpu")
                 .foregroundColor(theme.accentColor)
-            Text("\(cpuUsage, specifier: "%.1f")%")
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(theme.accentColor)
+            // CPU readout in dot-matrix characters, matching the status label
+            DotMatrixText(text: String(format: "%.1f%%", cpuUsage), color: theme.accentColor)
         }
         .padding(8)
     }
@@ -241,10 +239,8 @@ struct CaptureProblemView: View {
             // Center each label on its frequency, across the full width of the display
             GeometryReader { geometry in
                 ForEach(ticks, id: \.label) { tick in
-                    Text(tick.label)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(theme.accentColor.opacity(0.8))
-                        .shadow(color: theme.accentColor.opacity(0.5), radius: 3)
+                    // Smaller dots than the status label, and slightly dimmer
+                    DotMatrixText(text: tick.label, color: theme.accentColor.opacity(0.8), pitch: 1.45)
                         .position(x: position(of: tick.hz) * geometry.size.width, y: geometry.size.height / 2)
                 }
             }
