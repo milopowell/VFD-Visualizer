@@ -40,6 +40,8 @@ open "VFD-Visualizer/VFD Visualizer.xcodeproj"
 
 The project is set up to sign with the author's Apple developer team, so select your own team under Signing & Capabilities. Then press Cmd+R.
 
+Debug builds use their own bundle ID and appear as VFD Visualizer (Debug), so they're never confused with an installed copy. They need their own System Audio Recording permission. To use the app day to day, build the Release configuration and copy VFD Visualizer.app into Applications.
+
 ## Usage
 
 1. Click `OFFLINE` in the top-left corner to start capturing.
