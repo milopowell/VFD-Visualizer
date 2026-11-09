@@ -47,6 +47,7 @@
     _cppEngine->peakHoldTime = peakHoldTime;
 }
 
+// Sample rate of the capture device
 - (void)setSampleRate:(float)sampleRate {
     _cppEngine->sampleRate = sampleRate;
 }
@@ -67,6 +68,7 @@
     return _cppEngine->getNumBars();
 }
 
+// How many bars the engine has room for
 - (int)maxBars {
     return _cppEngine->getMaxBars();
 }

@@ -27,6 +27,7 @@ struct ContentView: View {
             VStack(spacing: 0){
                 HStack {
                     statusIndicator
+                    // Explain any capture problem next to the status indicator
                     if let problem = captureManager.captureProblem {
                         CaptureProblemView(problem: problem, theme: ColorTheme.themes[selectedTheme])
                     }
@@ -187,20 +188,24 @@ struct ContentView: View {
     }
 }
 
+// Shows what's wrong with capture, next to the status indicator
 struct CaptureProblemView: View {
     let problem: CaptureProblem
     var theme: ColorTheme
 
     var body: some View {
         HStack(spacing: 8) {
+            // The message itself
             Text(problem.message)
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundColor(theme.accentColor)
                 .lineLimit(2)
+            // When no sound is arriving, offer a shortcut to the permission's settings page
             if problem == .noAudioYet {
                 Button(action: {
                     NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
                 }) {
+                    // Drawn in the theme color, so it stays readable on every theme
                     Text("Open Settings")
                         .font(.system(size: 11, weight: .bold, design: .monospaced))
                         .foregroundColor(theme.accentColor)
@@ -216,6 +221,7 @@ struct CaptureProblemView: View {
 }
 
     struct FrequencyAxisView: View {
+        // Each label and the frequency it marks
         let ticks: [(label: String, hz: Float)] = [
             ("50Hz", 50), ("100Hz", 100), ("500Hz", 500),
             ("1kHz", 1000), ("5kHz", 5000), ("10kHz", 10000)
@@ -228,6 +234,7 @@ struct CaptureProblemView: View {
         }
 
         var body: some View {
+            // Center each label on its frequency, across the full width of the display
             GeometryReader { geometry in
                 ForEach(ticks, id: \.label) { tick in
                     Text(tick.label)

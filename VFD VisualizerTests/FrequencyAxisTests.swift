@@ -25,6 +25,7 @@ final class FrequencyAxisTests: XCTestCase {
     func testLabelsSitOnTheBarsTheirFrequenciesLight() {
         let bars = 64.0
         for tick in axis.ticks {
+            // Play the label's frequency and find the bar it lights
             let engine = makeEngine(bars: 64)
             play([Double(tick.hz)], into: engine)
             let lit = Double(loudestBar(of: engine))
@@ -42,10 +43,12 @@ final class FrequencyAxisTests: XCTestCase {
     // while the position calculations stayed correct.
     func testRenderedLabelsAreCenteredAndInFrame() throws {
         for width in [760.0, 800.0, 1248.0] {
+            // Render the real axis view at this width, at 2x scale
             let renderer = ImageRenderer(content: axis.frame(width: width, height: 30).background(Color.black))
             renderer.scale = 2
             let image = NSBitmapImageRep(cgImage: try XCTUnwrap(renderer.cgImage))
 
+            // Find each run of lit columns; gaps wider than 8 pt separate one label from the next
             var runs: [(start: Double, end: Double)] = []
             var start: Int?
             var last = -100
@@ -64,6 +67,7 @@ final class FrequencyAxisTests: XCTestCase {
             }
             if let first = start { runs.append((Double(first) / 2, Double(last + 1) / 2)) }
 
+            // One run per label, each inside the view and centered on its frequency
             XCTAssertEqual(runs.count, axis.ticks.count, "Width \(width)")
             guard runs.count == axis.ticks.count else { continue }
             for (tick, run) in zip(axis.ticks, runs) {

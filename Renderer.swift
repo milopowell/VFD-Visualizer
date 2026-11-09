@@ -75,6 +75,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         lastRenderTime = currentTime
         
+        // Get the engine and everything needed to draw this frame
         guard let engine = captureManager.audioEngine,
               let commandBuffer = commandQueue?.makeCommandBuffer(),
               let descriptor = view.currentRenderPassDescriptor,
@@ -84,12 +85,14 @@ class Renderer: NSObject, MTKViewDelegate {
         encoder.setRenderPipelineState(pipeline)
 
         // Pass the audio data (0)
+        // Send the engine's whole bar buffer, sized by its real capacity
         let maxBars = Int(engine.maxBars)
         if let audioDataPtr = engine.frequencyBuffer {
             encoder.setFragmentBytes(audioDataPtr, length: MemoryLayout<Float>.size * maxBars, index: 0)
         }
         
         // Pass the uniforms (1)
+        // Use the engine's bar count, which it limits to what it has room for
         let barSpacing = 1.0 / Float(engine.numberOfBars)
         
         let uniforms = VisualizerUniforms(

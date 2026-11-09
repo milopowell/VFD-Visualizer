@@ -44,6 +44,7 @@ final class AudioDownmixTests: XCTestCase {
     func testEmptyBufferListIsIgnored() {
         let list = AudioBufferList.allocate(maximumBuffers: 1)
         defer { free(list.unsafeMutablePointer) }
+        // A buffer that claims a size but has no channels and no data
         list[0] = AudioBuffer(mNumberChannels: 0, mDataByteSize: 4096, mData: nil)
         var called = false
         withMonoSamples(in: list.unsafePointer) { _ in called = true }
@@ -72,8 +73,10 @@ final class AudioDownmixTests: XCTestCase {
     // together, as the app once did, moved interleaved audio to about half its pitch.
     func testStereoLayoutsReachTheSameBarAsMono() {
         for hz in [1000.0, 5000.0] {
+            // One buffer of the tone, used for every channel
             let tone: [Float] = (0..<framesPerBuffer).map { Float(0.1 * sin(2 * .pi * hz * Double($0) / 48000)) }
             var bars: [ChannelLayout: Int] = [:]
+            // Play it through the downmix in each layout and note the loudest bar
             for layout in [ChannelLayout.mono, .planar, .interleaved] {
                 let engine = makeEngine()
                 for _ in 0..<25 {
@@ -84,6 +87,7 @@ final class AudioDownmixTests: XCTestCase {
                 }
                 bars[layout] = loudestBar(of: engine)
             }
+            // Both stereo layouts must land on the same bar as mono
             XCTAssertEqual(bars[.planar], bars[.mono], "\(hz) Hz")
             XCTAssertEqual(bars[.interleaved], bars[.mono], "\(hz) Hz")
         }

@@ -106,6 +106,7 @@ final class CaptureManagerTests: XCTestCase {
     }
 
     func testStoppingTwiceDoesNotDoubleTheFallSpeed() {
+        // Fills the bars, stops capture the given number of times, and returns how far they fell in half a second
         func fall(stops: Int) -> Float {
             let manager = makeManager()
             manager.isRecording = true
@@ -131,14 +132,17 @@ final class CaptureManagerTests: XCTestCase {
     func testStopDuringARestartStaysOffline() throws {
         let manager = makeManager()
         manager.isRecording = true
+        // An output change starts a restart, then stop is clicked before it finishes
         let restart = manager.beginCaptureAttempt()
         manager.stopStream()
+        // The restart finishes late
         manager.finishCaptureAttempt(restart, with: try SystemAudioTap())
         XCTAssertFalse(manager.isRecording, "A late restart must not resume capture after a stop")
     }
 
     func testOnlyTheNewestStartWins() throws {
         let manager = makeManager()
+        // Start is clicked twice before either attempt finishes
         let first = manager.beginCaptureAttempt()
         let second = manager.beginCaptureAttempt()
         manager.finishCaptureAttempt(first, with: try SystemAudioTap())

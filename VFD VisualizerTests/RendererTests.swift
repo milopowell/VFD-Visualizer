@@ -49,6 +49,7 @@ final class RendererTests: XCTestCase {
         }
 
         let pixels = try drawFrame(manager)
+        // Walk across one row, counting where each lit run begins
         let row = (height * 3 / 4) * width * 4
         var runs = 0
         var inRun = false
@@ -89,6 +90,7 @@ final class RendererTests: XCTestCase {
 
         let pixels = try drawFrame(manager)
         let x = width / 16 / 2
+        // Count rows bright enough to be a lit segment; glow on unlit segments stays dimmer
         return (0..<height).filter { y in pixels[(y * width + x) * 4 + 1] > 150 }.count
     }
 

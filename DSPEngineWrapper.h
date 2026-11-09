@@ -18,6 +18,7 @@
 
 @property (nonatomic, readonly) float *frequencyBuffer;
 @property (nonatomic, readonly) int numberOfBars;
+// How many bars the engine has room for; numberOfBars is how many are shown
 @property (nonatomic, readonly) int maxBars;
 @property (nonatomic, readonly) float *peakBuffer;
 
@@ -28,6 +29,7 @@
 -(void)setGravity:(float)gravity;
 -(void)setNumBars:(int)numBars;
 -(void)setHoldTime:(int)peakHoldTime;
+// The capture device's sample rate, so bars land on the right frequencies
 -(void)setSampleRate:(float)sampleRate;
 //-(void)setBaseline:(float)baseline;
 
