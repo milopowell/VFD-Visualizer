@@ -71,18 +71,27 @@ fragment float4 vfd_fragment(RasterData in [[stage_in]],
     float isBarGap = (localX > 0.1 && localX < 0.9 && localY > 0.1 && localY < 0.9) ? 1.0 : 0.0;
     
     // Main bar logic
-    float isBar = step(uv.y, amplitude);
+    // Light whole segments only, so the top of the bar lines up with the segment grid
+    // and the peak caps. A segment lights once the level reaches half of it.
+    float litRows = floor(amplitude * 30.0 + 0.5);
+    float isBar = (floor(uv.y * 30.0) < litRows) ? 1.0 : 0.0;
+    // Height of the lit bar, in the same 0 to 1 units as amplitude
+    float level = litRows / 30.0;
     
     // Peak floating cap logic
+    // The cap is one whole segment, like the peak light on a hardware meter,
+    // so it lines up with the segment grid instead of cutting across the gaps
     float isPeak = 0.0;
-    if (theme.showPeaks == 1) {
-        float capThick = 0.015;
-        isPeak = step(peakValue - capThick, uv.y) * step(uv.y, peakValue);
+    if (theme.showPeaks == 1 && peakValue > 0.0) {
+        // Row of the top segment a bar at the peak's level would light, using the same
+        // rounding as the bar, so a cap riding on a rising bar sits on its top segment
+        float peakRow = floor(min(peakValue, 1.0) * 30.0 + 0.5) - 1.0;
+        isPeak = (floor(uv.y * 30.0) == peakRow) ? 1.0 : 0.0;
     }
     
     // VFD glow logic
-    // Distance from current pixel y to top of bar
-    float dist = abs(uv.y - amplitude);
+    // Distance from current pixel y to top of the lit bar
+    float dist = abs(uv.y - level);
     // Inverse distance to create a bloom
     float glow = 0.02 / (dist + 0.05);
     
@@ -92,7 +101,7 @@ fragment float4 vfd_fragment(RasterData in [[stage_in]],
     // Inactive or active bar
     float3 color = mix(theme.inactiveColor, activeGradient, isBar);
     
-    // Peak cap
+    // Peak cap, brighter than the bar's top color so it stands out
     color = mix(color, theme.activeColorHigh + 0.2, isPeak);
     
     // Add glow

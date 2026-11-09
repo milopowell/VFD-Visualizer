@@ -40,6 +40,8 @@ struct ContentView: View {
                     }
                 }
                 .padding()
+                // Leave room for the close, minimize, and zoom buttons, which sit over this corner without a title bar
+                .padding(.leading, 60)
                 
                 // Main Visualizer
                 MetalVisualizerView(
@@ -47,11 +49,18 @@ struct ContentView: View {
                     theme: ColorTheme.themes[selectedTheme]
                 )
                 .frame(minWidth: 800, minHeight: 400)
+                // Bezel edge: a fine line in the theme color around the display glass
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(ColorTheme.themes[selectedTheme].accentColor.opacity(1), lineWidth: showBorder ? 10 : 0)
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(ColorTheme.themes[selectedTheme].accentColor.opacity(0.35), lineWidth: showBorder ? 2 : 0)
                 )
-                .padding(showBorder ? 20 : 0)
+                .padding(showBorder ? 14 : 0)
+                // Faceplate: a dark frame, a little lighter than the background, like the panel around a hardware display
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white.opacity(showBorder ? 0.12 : 0))
+                )
+                .padding(showBorder ? 6 : 0) // 14 + 6 keeps the 20 pt inset that the frequency axis lines up with
                 .background(ColorTheme.themes[selectedTheme].backgroundColor)
                 
                 if showHzAxis {
