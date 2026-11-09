@@ -63,6 +63,8 @@ Open the settings with the slider button in the top-right corner.
 | Show Falling Peaks | On or off | On |
 | Show CPU Usage | On or off | Off |
 
+Settings are remembered between launches, except Bar Count, which always starts at 16. Reset to Defaults, next to Done, puts every setting back.
+
 ### If the bars don't move
 
 If no sound has arrived after 5 seconds, the app shows a hint with an Open Settings button. macOS gives no error when the permission is off, only silence, so check that VFD Visualizer is allowed under System Audio Recording Only and that something is playing.

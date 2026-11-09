@@ -10,25 +10,71 @@ import CoreAudio
 import Accelerate // Not used here, but this import is what links vDSP for DSPEngine
 import Combine
 
+// Names the settings are saved under
+enum SettingKeys {
+    static let gain = "gain"
+    static let smoothing = "smoothing"
+    static let gravity = "peakGravity"
+    static let peakHoldTime = "peakHoldTime"
+    static let showPeaks = "showPeaks"
+    static let showFrequencyAxis = "showFrequencyAxis"
+    static let showBezel = "showBezel"
+    static let themeName = "themeName"
+    static let showCPU = "showCPU"
+}
+
+// Default settings, used on first launch and by Reset to Defaults
+enum SettingDefaults {
+    static let gain: Float = 20.0
+    static let smoothing: Float = 0.7
+    static let gravity: Float = 0.005
+    static let peakHoldTime = 30
+    static let showPeaks = true
+    static let numBars = 16 // Never saved, so the app always opens at 16 bars
+    static let showFrequencyAxis = true
+    static let showBezel = true
+    static let themeName = "Phosphor"
+    static let showCPU = false
+}
+
 class CaptureManager: NSObject, ObservableObject {
     
-    @Published var gain: Float = 20.0 {
-        didSet { audioEngine?.setGain(gain) }
+    // Audio settings: each one updates the engine and saves itself for next launch
+    @Published var gain: Float = SettingDefaults.gain {
+        didSet {
+            audioEngine?.setGain(gain)
+            settings.set(gain, forKey: SettingKeys.gain)
+        }
     }
-    @Published var smoothing: Float = 0.7 {
-        didSet { audioEngine?.setSmoothing(smoothing) }
+    @Published var smoothing: Float = SettingDefaults.smoothing {
+        didSet {
+            audioEngine?.setSmoothing(smoothing)
+            settings.set(smoothing, forKey: SettingKeys.smoothing)
+        }
     }
-    @Published var gravity: Float = 0.005 {
-        didSet { audioEngine?.setGravity(gravity) }
+    @Published var gravity: Float = SettingDefaults.gravity {
+        didSet {
+            audioEngine?.setGravity(gravity)
+            settings.set(gravity, forKey: SettingKeys.gravity)
+        }
     }
-    @Published var numBars: Int = 16 {
+    // Bar count isn't saved, so the app always opens at 16 bars
+    @Published var numBars: Int = SettingDefaults.numBars {
         didSet { audioEngine?.setNumBars(Int32(numBars)) }
     }
-    @Published var showPeaks: Bool = true
-    
-    @Published var peakHoldTime: Int = 30 {
-        didSet { audioEngine?.setHoldTime(Int32(peakHoldTime)) }
+    @Published var showPeaks: Bool = SettingDefaults.showPeaks {
+        didSet { settings.set(showPeaks, forKey: SettingKeys.showPeaks) }
     }
+    
+    @Published var peakHoldTime: Int = SettingDefaults.peakHoldTime {
+        didSet {
+            audioEngine?.setHoldTime(Int32(peakHoldTime))
+            settings.set(peakHoldTime, forKey: SettingKeys.peakHoldTime)
+        }
+    }
+
+    // Where settings are saved. Tests pass their own, so they never touch the app's.
+    private let settings: UserDefaults
 
     let audioEngine: DSPEngineWrapper?
     @Published var isRecording: Bool = false {
@@ -67,10 +113,21 @@ class CaptureManager: NSObject, ObservableObject {
     }
 
     // The capacity should cover the largest bar count in settings
-    init(barCapacity: Int32 = 64) {
+    init(barCapacity: Int32 = 64, settings: UserDefaults = .standard) {
         // Create the C++ engine with room for the most bars
         audioEngine = DSPEngineWrapper(size: barCapacity)
+        self.settings = settings
         super.init()
+
+        // Load the settings saved last time, falling back to the defaults
+        gain = settings.object(forKey: SettingKeys.gain) as? Float ?? SettingDefaults.gain
+        smoothing = settings.object(forKey: SettingKeys.smoothing) as? Float ?? SettingDefaults.smoothing
+        gravity = settings.object(forKey: SettingKeys.gravity) as? Float ?? SettingDefaults.gravity
+        peakHoldTime = settings.object(forKey: SettingKeys.peakHoldTime) as? Int ?? SettingDefaults.peakHoldTime
+        showPeaks = settings.object(forKey: SettingKeys.showPeaks) as? Bool ?? SettingDefaults.showPeaks
+
+        // Setting each one above runs its didSet, which passes it to the engine.
+        // The bar count isn't loaded, so match the engine to the app's default here.
         audioEngine?.setNumBars(Int32(numBars)) // The engine keeps its own default, so match the app's
         // Restart capture whenever the output device changes
         AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &defaultOutputAddress, .main, outputDeviceChanged)
@@ -79,6 +136,19 @@ class CaptureManager: NSObject, ObservableObject {
     deinit {
         // Stop watching the output device
         AudioObjectRemovePropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &defaultOutputAddress, .main, outputDeviceChanged)
+    }
+
+    // Put every audio setting back to its default, including 16 bars, and forget the saved values
+    func resetToDefaults() {
+        gain = SettingDefaults.gain
+        smoothing = SettingDefaults.smoothing
+        gravity = SettingDefaults.gravity
+        peakHoldTime = SettingDefaults.peakHoldTime
+        showPeaks = SettingDefaults.showPeaks
+        numBars = SettingDefaults.numBars
+        for key in [SettingKeys.gain, SettingKeys.smoothing, SettingKeys.gravity, SettingKeys.peakHoldTime, SettingKeys.showPeaks] {
+            settings.removeObject(forKey: key)
+        }
     }
 
     // Stop capturing and go offline

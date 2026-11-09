@@ -91,3 +91,9 @@ func withBufferList(left: [Float], right: [Float]? = nil, layout: ChannelLayout,
         }
     }
 }
+
+// An empty settings store, so tests never read or change the app's own saved settings
+func freshSettings(named name: String = "VFDVisualizerTests") -> UserDefaults {
+    UserDefaults().removePersistentDomain(forName: name)
+    return UserDefaults(suiteName: name)!
+}

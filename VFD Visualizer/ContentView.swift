@@ -12,24 +12,28 @@ import Combine
 struct ContentView: View {
     @StateObject var captureManager = CaptureManager()
     @State private var showSettings = false
-    @State private var showHzAxis = true
-    @State private var showBorder = true
-    @State private var selectedTheme = 0
-    @State private var showCPU = false
+    // Display settings, saved between launches
+    @AppStorage(SettingKeys.showFrequencyAxis) private var showHzAxis = SettingDefaults.showFrequencyAxis
+    @AppStorage(SettingKeys.showBezel) private var showBorder = SettingDefaults.showBezel
+    @AppStorage(SettingKeys.themeName) private var themeName = SettingDefaults.themeName
+    @AppStorage(SettingKeys.showCPU) private var showCPU = SettingDefaults.showCPU
+
+    // The selected theme. It's saved by name, so the choice survives changes to the theme list.
+    private var theme: ColorTheme { ColorTheme.named(themeName) }
     @State private var cpuUsage: Double = 0.0
     
     let cpuTimer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            ColorTheme.themes[selectedTheme].backgroundColor.ignoresSafeArea()
+            theme.backgroundColor.ignoresSafeArea()
             
             VStack(spacing: 0){
                 HStack {
                     statusIndicator
                     // Explain any capture problem next to the status indicator
                     if let problem = captureManager.captureProblem {
-                        CaptureProblemView(problem: problem, theme: ColorTheme.themes[selectedTheme])
+                        CaptureProblemView(problem: problem, theme: theme)
                     }
                     Spacer()
                     if showCPU {
@@ -37,7 +41,7 @@ struct ContentView: View {
                     }
                     Button(action: { showSettings.toggle() }){
                         Image(systemName: "slider.horizontal.3")
-                            .foregroundColor(ColorTheme.themes[selectedTheme].accentColor)
+                            .foregroundColor(theme.accentColor)
                     }
                 }
                 .padding()
@@ -47,13 +51,13 @@ struct ContentView: View {
                 // Main Visualizer
                 MetalVisualizerView(
                     captureManager: captureManager,
-                    theme: ColorTheme.themes[selectedTheme]
+                    theme: theme
                 )
                 .frame(minWidth: 800, minHeight: 400)
                 // Bezel edge: a fine line in the theme color around the display glass
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(ColorTheme.themes[selectedTheme].accentColor.opacity(0.35), lineWidth: showBorder ? 2 : 0)
+                        .stroke(theme.accentColor.opacity(0.35), lineWidth: showBorder ? 2 : 0)
                 )
                 .padding(showBorder ? 14 : 0)
                 // Faceplate: a dark frame, a little lighter than the background, like the panel around a hardware display
@@ -62,10 +66,10 @@ struct ContentView: View {
                         .fill(Color.white.opacity(showBorder ? 0.12 : 0))
                 )
                 .padding(showBorder ? 6 : 0) // 14 + 6 keeps the 20 pt inset that the frequency axis lines up with
-                .background(ColorTheme.themes[selectedTheme].backgroundColor)
+                .background(theme.backgroundColor)
                 
                 if showHzAxis {
-                    FrequencyAxisView(theme: ColorTheme.themes[selectedTheme])
+                    FrequencyAxisView(theme: theme)
                         .frame(height: 30)
                         .padding(.horizontal, showBorder ? 20 : 0) // Match the visualizer's width
                         .padding(.bottom, 10)
@@ -77,7 +81,7 @@ struct ContentView: View {
                 captureManager: captureManager,
                 showHzAxis: $showHzAxis,
                 showBorder: $showBorder,
-                selectedTheme: $selectedTheme,
+                themeName: $themeName,
                 showCPU: $showCPU
             )
             .presentationDetents([.height(400)])
@@ -105,7 +109,7 @@ struct ContentView: View {
                     .shadow(color: captureManager.isRecording ? .green : .red, radius: 4)
                 Text(captureManager.isRecording ? "SYSTEM ACTIVE" : "OFFLINE")
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(ColorTheme.themes[selectedTheme].accentColor)
+                    .foregroundColor(theme.accentColor)
             }
             .padding(8)
             .cornerRadius(4)
@@ -115,10 +119,10 @@ struct ContentView: View {
     var cpuIndicator: some View {
         HStack(spacing: 4) {
             Image(systemName: "cpu")
-                .foregroundColor(ColorTheme.themes[selectedTheme].accentColor)
+                .foregroundColor(theme.accentColor)
             Text("\(cpuUsage, specifier: "%.1f")%")
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(ColorTheme.themes[selectedTheme].accentColor)
+                .foregroundColor(theme.accentColor)
         }
         .padding(8)
     }
@@ -251,7 +255,7 @@ struct SettingsView: View {
     @ObservedObject var captureManager: CaptureManager
     @Binding var showHzAxis: Bool
     @Binding var showBorder: Bool
-    @Binding var selectedTheme: Int
+    @Binding var themeName: String
     @Binding var showCPU: Bool
     @Environment(\.dismiss) var dismiss
 
@@ -262,6 +266,14 @@ struct SettingsView: View {
                 Text("VFD Settings")
                     .font(.headline)
                 Spacer()
+                // Put every setting back to how the app first opens
+                Button("Reset to Defaults") {
+                    captureManager.resetToDefaults()
+                    showHzAxis = SettingDefaults.showFrequencyAxis
+                    showBorder = SettingDefaults.showBezel
+                    themeName = SettingDefaults.themeName
+                    showCPU = SettingDefaults.showCPU
+                }
                 Button("Done") {
                     dismiss()
                 }
@@ -317,9 +329,9 @@ struct SettingsView: View {
                 Section(header: Text("Appearance").font(.caption).bold()) {
                    
                     // Color Theme
-                    Picker("Color Theme", selection: $selectedTheme) {
-                        ForEach(0..<ColorTheme.themes.count, id: \.self) { index in
-                            Text(ColorTheme.themes[index].name).tag(index)
+                    Picker("Color Theme", selection: $themeName) {
+                        ForEach(ColorTheme.themes, id: \.name) { theme in
+                            Text(theme.name).tag(theme.name)
                         }
                     }
                     
@@ -416,4 +428,9 @@ struct ColorTheme {
             accentColor: .red
         )
     ]
+
+    // Looks up a theme by name, falling back to the first theme if that name no longer exists
+    static func named(_ name: String) -> ColorTheme {
+        themes.first { $0.name == name } ?? themes[0]
+    }
 }

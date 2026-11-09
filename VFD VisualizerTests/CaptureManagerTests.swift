@@ -15,7 +15,8 @@ private struct TestFailure: LocalizedError {
 
 final class CaptureManagerTests: XCTestCase {
     private func makeManager() -> CaptureManager {
-        let manager = CaptureManager()
+        // Its own settings store, so saved settings can't change these tests
+        let manager = CaptureManager(settings: freshSettings())
         manager.noAudioHintDelay = 0.1
         return manager
     }
