@@ -15,7 +15,7 @@ Click the image to watch a video demonstration. The video shows an earlier versi
 - Captures all system audio with a Core Audio tap, without any screen access
 - 16, 32, or 64 log-spaced bars covering 40 Hz to 20 kHz
 - Falling peak caps and a VFD-style glow
-- Six color themes: Classic VFD, Deep Ocean, Sunset, Matrix, Purple Haze, and Fire
+- Seven color themes: Phosphor, Classic VFD, Amber, Matrix, Deep Ocean, Sunset, and Fire
 - Adjustable gain, smoothing, peak gravity, and peak hold
 - Optional frequency axis, bezel frame, and CPU usage readout
 
@@ -55,7 +55,7 @@ Open the settings with the slider button in the top-right corner.
 | Peak Gravity | 0.001 to 0.02 | 0.005 |
 | Peak Hold | 0 to 120 frames | 30 frames |
 | Bar Count | 16, 32, or 64 | 16 |
-| Color Theme | Six themes | Classic VFD |
+| Color Theme | Seven themes | Phosphor |
 | Show Frequency Axis | On or off | On |
 | Show Bezel Frame | On or off | On |
 | Show Falling Peaks | On or off | On |

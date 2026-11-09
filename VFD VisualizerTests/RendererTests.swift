@@ -9,6 +9,7 @@ import XCTest
 import MetalKit
 @testable import VFD_Visualizer
 
+@MainActor
 final class RendererTests: XCTestCase {
     private let width = 1024
     private let height = 240

@@ -34,6 +34,10 @@ final class FrequencyAxisTests: XCTestCase {
         }
     }
 
+    func testThemeListOpensOnPhosphor() {
+        XCTAssertEqual(ColorTheme.themes.map(\.name), ["Phosphor", "Classic VFD", "Amber", "Matrix", "Deep Ocean", "Sunset", "Fire"])
+    }
+
     // Measures the real rendered view, because a layout bug once shifted every label
     // while the position calculations stayed correct.
     func testRenderedLabelsAreCenteredAndInFrame() throws {

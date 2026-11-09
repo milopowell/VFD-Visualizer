@@ -341,22 +341,47 @@ struct ColorTheme {
     let backgroundColor: Color
     let accentColor: Color
     
+    // The first theme is the one the app opens with
     static let themes: [ColorTheme] = [
         ColorTheme(
+            name: "Phosphor",
+            activeColorLow: SIMD3<Float>(0.20, 0.85, 0.74),
+            activeColorHigh: SIMD3<Float>(0.75, 1.00, 0.95),
+            inactiveColor: SIMD3<Float>(0.04, 0.14, 0.12),
+            backgroundColor: Color(red: 0.01, green: 0.045, blue: 0.04),
+            accentColor: Color(red: 0.38, green: 0.97, blue: 0.86)
+        ),
+        ColorTheme(
             name: "Classic VFD",
-            activeColorLow: SIMD3<Float>(0.0, 1.0, 1.0),
-            activeColorHigh: SIMD3<Float>(1.0, 0.0, 0.0),
-            inactiveColor: SIMD3<Float>(0.0, 0.0, 0.1),
+            activeColorLow: SIMD3<Float>(0.00, 0.90, 1.00),
+            activeColorHigh: SIMD3<Float>(0.70, 0.35, 1.00),
+            inactiveColor: SIMD3<Float>(0.02, 0.08, 0.12),
             backgroundColor: .black,
-            accentColor: .cyan
+            accentColor: Color(red: 0.2, green: 0.85, blue: 1)
+        ),
+        ColorTheme(
+            name: "Amber",
+            activeColorLow: SIMD3<Float>(1.00, 0.50, 0.05),
+            activeColorHigh: SIMD3<Float>(1.00, 0.86, 0.50),
+            inactiveColor: SIMD3<Float>(0.13, 0.07, 0.02),
+            backgroundColor: Color(red: 0.035, green: 0.02, blue: 0.008),
+            accentColor: Color(red: 1, green: 0.66, blue: 0.18)
+        ),
+        ColorTheme(
+            name: "Matrix",
+            activeColorLow: SIMD3<Float>(0.00, 0.42, 0.08),
+            activeColorHigh: SIMD3<Float>(0.60, 1.00, 0.60),
+            inactiveColor: SIMD3<Float>(0.00, 0.09, 0.02),
+            backgroundColor: Color(red: 0, green: 0.01, blue: 0),
+            accentColor: Color(red: 0.25, green: 0.95, blue: 0.4)
         ),
         ColorTheme(
             name: "Deep Ocean",
-            activeColorLow: SIMD3<Float>(0.0, 0.4, 0.8),
-            activeColorHigh: SIMD3<Float>(0.5, 0.0, 0.5),
-            inactiveColor: SIMD3<Float>(0.9, 0.9, 0.9),
-            backgroundColor: Color(white: 0.9),
-            accentColor: .blue
+            activeColorLow: SIMD3<Float>(0.00, 0.28, 0.85),
+            activeColorHigh: SIMD3<Float>(0.40, 0.90, 1.00),
+            inactiveColor: SIMD3<Float>(0.02, 0.06, 0.14),
+            backgroundColor: Color(red: 0.01, green: 0.025, blue: 0.07),
+            accentColor: Color(red: 0.3, green: 0.68, blue: 1)
         ),
         ColorTheme(
             name: "Sunset",
@@ -365,22 +390,6 @@ struct ColorTheme {
             inactiveColor: SIMD3<Float>(0.1, 0.05, 0.0),
             backgroundColor: Color(red: 0.1, green: 0.05, blue: 0.0),
             accentColor: .orange
-        ),
-        ColorTheme(
-            name: "Matrix",
-            activeColorLow: SIMD3<Float>(0.0, 1.0, 0.0),
-            activeColorHigh: SIMD3<Float>(0.0, 0.5, 0.0),
-            inactiveColor: SIMD3<Float>(0.0, 0.1, 0.0),
-            backgroundColor: .black,
-            accentColor: .green
-        ),
-        ColorTheme(
-            name: "Purple Haze",
-            activeColorLow: SIMD3<Float>(0.5, 0.0, 1.0),
-            activeColorHigh: SIMD3<Float>(1.0, 0.0, 0.5),
-            inactiveColor: SIMD3<Float>(0.1, 0.0, 0.1),
-            backgroundColor: Color(red: 0.05, green: 0.0, blue: 0.1),
-            accentColor: .purple
         ),
         ColorTheme(
             name: "Fire",
