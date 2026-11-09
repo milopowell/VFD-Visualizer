@@ -298,7 +298,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("Apperance").font(.caption).bold()) {
+                Section(header: Text("Appearance").font(.caption).bold()) {
                    
                     // Color Theme
                     Picker("Color Theme", selection: $selectedTheme) {

@@ -20,6 +20,12 @@ final class CaptureManagerTests: XCTestCase {
         return manager
     }
 
+    func testOpensAt16Bars() {
+        let manager = CaptureManager()
+        XCTAssertEqual(manager.numBars, 16)
+        XCTAssertEqual(manager.audioEngine?.numberOfBars, 16, "The engine must match the setting, or the display draws a different count")
+    }
+
     // MARK: Silence hint
 
     func testSilenceShowsTheHintWithoutStoppingCapture() {

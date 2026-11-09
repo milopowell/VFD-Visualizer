@@ -21,7 +21,7 @@ class CaptureManager: NSObject, ObservableObject {
     @Published var gravity: Float = 0.005 {
         didSet { audioEngine?.setGravity(gravity) }
     }
-    @Published var numBars: Int = 32 {
+    @Published var numBars: Int = 16 {
         didSet { audioEngine?.setNumBars(Int32(numBars)) }
     }
     @Published var showPeaks: Bool = true
@@ -65,6 +65,7 @@ class CaptureManager: NSObject, ObservableObject {
     init(barCapacity: Int32 = 64) {
         audioEngine = DSPEngineWrapper(size: barCapacity)
         super.init()
+        audioEngine?.setNumBars(Int32(numBars)) // The engine keeps its own default, so match the app's
         AudioObjectAddPropertyListenerBlock(AudioObjectID(kAudioObjectSystemObject), &defaultOutputAddress, .main, outputDeviceChanged)
     }
 

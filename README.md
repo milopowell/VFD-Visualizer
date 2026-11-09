@@ -54,7 +54,7 @@ Open the settings with the slider button in the top-right corner.
 | Smoothing | 0 to 0.99 | 0.70 |
 | Peak Gravity | 0.001 to 0.02 | 0.005 |
 | Peak Hold | 0 to 120 frames | 30 frames |
-| Bar Count | 16, 32, or 64 | 32 |
+| Bar Count | 16, 32, or 64 | 16 |
 | Color Theme | Six themes | Classic VFD |
 | Show Frequency Axis | On or off | On |
 | Show Bezel Frame | On or off | On |
