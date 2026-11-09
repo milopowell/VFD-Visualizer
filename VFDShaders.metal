@@ -16,7 +16,7 @@ struct VisualizerUniforms {
     int numBars;
     float showPeaks; // 1.0 for true, 0.0 for false
     float barSpacing;
-    float padding;
+    float standby; // 1.0 while OFFLINE, 0.0 while capturing
 };
 
 // Ensures the vertex output matches the fragment input
@@ -94,12 +94,24 @@ fragment float4 vfd_fragment(RasterData in [[stage_in]],
     float dist = abs(uv.y - level);
     // Inverse distance to create a bloom
     float glow = 0.02 / (dist + 0.05);
+    // Standby (OFFLINE): the display is powered down, so no glow
+    glow *= (1.0 - theme.standby);
     
     // Color mixing
     float3 activeGradient = mix(theme.activeColorLow, theme.activeColorHigh, uv.y);
     
     // Inactive or active bar
     float3 color = mix(theme.inactiveColor, activeGradient, isBar);
+
+    // Standby: dim the unlit segments, and keep the bottom row faintly lit,
+    // like a hardware meter that's switched on but idle
+    if (theme.standby == 1.0) {
+        color = mix(theme.inactiveColor * 0.6, activeGradient, isBar);
+        // Only where no bar is lit, so a bar still falling after a stop keeps its bottom segment
+        if (floor(uv.y * 30.0) == 0.0 && isBar == 0.0) {
+            color = theme.activeColorLow * 0.35;
+        }
+    }
     
     // Peak cap, brighter than the bar's top color so it stands out
     color = mix(color, theme.activeColorHigh + 0.2, isPeak);

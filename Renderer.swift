@@ -16,7 +16,7 @@ struct VisualizerUniforms {
     var numBars: Int32
     var showPeaks: Float
     var barSpacing: Float
-    var padding: Float = 0
+    var standby: Float // 1.0 while OFFLINE, 0.0 while capturing
 }
 
 class Renderer: NSObject, MTKViewDelegate {
@@ -101,7 +101,9 @@ class Renderer: NSObject, MTKViewDelegate {
             inactiveColor: theme.inactiveColor,
             numBars: engine.numberOfBars,
             showPeaks: captureManager.showPeaks ? 1.0 : 0.0,
-            barSpacing: barSpacing
+            barSpacing: barSpacing,
+            // Show the standby look whenever capture isn't running
+            standby: captureManager.isRecording ? 0.0 : 1.0
             )
 
         

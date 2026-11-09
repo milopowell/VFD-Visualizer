@@ -103,6 +103,38 @@ final class RendererTests: XCTestCase {
         XCTAssertGreaterThan(try litBarRows(level: 16 / 30), try litBarRows(level: 15 / 30))
     }
 
+    // Green level at the middle of one segment row (0 is the bottom), down the middle of the first bar
+    private func segmentGreen(_ pixels: [UInt8], row: Int) -> UInt8 {
+        let y = Int(Double(height) * (1 - (Double(row) + 0.5) / 30))
+        return pixels[(y * width + width / 32) * 4 + 1]
+    }
+
+    // Draws a frame with nothing playing, either OFFLINE or capturing
+    private func silentFrame(capturing: Bool) throws -> [UInt8] {
+        let manager = CaptureManager(settings: freshSettings())
+        let engine = try XCTUnwrap(manager.audioEngine)
+        for i in 0..<16 {
+            engine.frequencyBuffer[i] = 0
+            engine.peakBuffer[i] = 0
+        }
+        manager.isRecording = capturing
+        return try drawFrame(manager)
+    }
+
+    // OFFLINE: the display looks powered down, with only the bottom row faintly lit
+    func testStandbyLooksPoweredDown() throws {
+        let pixels = try silentFrame(capturing: false)
+        XCTAssertGreaterThan(segmentGreen(pixels, row: 0), 60, "The bottom row should stay faintly lit")
+        XCTAssertLessThan(segmentGreen(pixels, row: 0), 120, "but stay much dimmer than a lit segment")
+        XCTAssertLessThan(segmentGreen(pixels, row: 6), 30, "Unlit segments should be dim, with no glow")
+    }
+
+    // Capturing: the normal look, with its glow, even when nothing is playing
+    func testCapturingKeepsTheNormalLook() throws {
+        let pixels = try silentFrame(capturing: true)
+        XCTAssertGreaterThan(segmentGreen(pixels, row: 6), 35, "The glow should reach unlit segments while capturing")
+    }
+
     func testEachBarCountSettingDrawsThatManyBars() throws {
         for setting in [16, 32, 64] {
             XCTAssertEqual(try barsDrawn(capacity: 64, setting: setting), setting)
