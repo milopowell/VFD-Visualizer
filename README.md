@@ -15,7 +15,7 @@ Click the image to watch a video demonstration. The video shows an earlier versi
 - Captures all system audio with a Core Audio tap, without any screen access
 - 16, 32, or 64 log-spaced bars covering 40 Hz to 20 kHz
 - Falling peak caps and a VFD-style glow
-- Dot-matrix labels, like the character cells on a VFD panel
+- Dot-matrix labels, like the character cells on a VFD panel, covering Latin and Cyrillic letters
 - A standby look while offline, with only the bottom row faintly lit
 - Seven color themes: Phosphor, Classic VFD, Amber, Matrix, Deep Ocean, Sunset, and Fire
 - Adjustable gain, smoothing, peak gravity, and peak hold
