@@ -11,12 +11,15 @@ import Combine
 
 struct ContentView: View {
     @StateObject var captureManager = CaptureManager()
+    // Listens for what's playing in Apple Music or Spotify
+    @StateObject private var nowPlaying = NowPlayingMonitor()
     @State private var showSettings = false
     // Display settings, saved between launches
     @AppStorage(SettingKeys.showFrequencyAxis) private var showHzAxis = SettingDefaults.showFrequencyAxis
     @AppStorage(SettingKeys.showBezel) private var showBorder = SettingDefaults.showBezel
     @AppStorage(SettingKeys.themeName) private var themeName = SettingDefaults.themeName
     @AppStorage(SettingKeys.showCPU) private var showCPU = SettingDefaults.showCPU
+    @AppStorage(SettingKeys.showNowPlaying) private var showNowPlaying = SettingDefaults.showNowPlaying
 
     // The selected theme. It's saved by name, so the choice survives changes to the theme list.
     private var theme: ColorTheme { ColorTheme.named(themeName) }
@@ -36,6 +39,11 @@ struct ContentView: View {
                         CaptureProblemView(problem: problem, theme: theme)
                     }
                     Spacer()
+                    // What's playing in Apple Music or Spotify, unless a capture problem needs the space
+                    if showNowPlaying, captureManager.captureProblem == nil, let track = nowPlaying.track {
+                        NowPlayingView(track: track, color: theme.accentColor)
+                        Spacer()
+                    }
                     if showCPU {
                         cpuIndicator
                     }
@@ -76,13 +84,16 @@ struct ContentView: View {
                 }
             }
         }
+        // Start listening for track changes
+        .onAppear { nowPlaying.start() }
         .sheet(isPresented: $showSettings) {
             SettingsView(
                 captureManager: captureManager,
                 showHzAxis: $showHzAxis,
                 showBorder: $showBorder,
                 themeName: $themeName,
-                showCPU: $showCPU
+                showCPU: $showCPU,
+                showNowPlaying: $showNowPlaying
             )
             .presentationDetents([.height(400)])
             .presentationBackground(.ultraThinMaterial)
@@ -253,6 +264,7 @@ struct SettingsView: View {
     @Binding var showBorder: Bool
     @Binding var themeName: String
     @Binding var showCPU: Bool
+    @Binding var showNowPlaying: Bool
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -269,6 +281,7 @@ struct SettingsView: View {
                     showBorder = SettingDefaults.showBezel
                     themeName = SettingDefaults.themeName
                     showCPU = SettingDefaults.showCPU
+                    showNowPlaying = SettingDefaults.showNowPlaying
                 }
                 Button("Done") {
                     dismiss()
@@ -339,6 +352,8 @@ struct SettingsView: View {
                     Toggle("Show Falling Peaks", isOn: $captureManager.showPeaks)
                     // Show cpu usage
                     Toggle("Show CPU Usage", isOn: $showCPU)
+                    // Show what's playing in Apple Music or Spotify
+                    Toggle("Show Now Playing", isOn: $showNowPlaying)
                     
                     // Bar num
                         Picker("Bar Count", selection: $captureManager.numBars) {

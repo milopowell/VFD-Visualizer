@@ -21,6 +21,7 @@ enum SettingKeys {
     static let showBezel = "showBezel"
     static let themeName = "themeName"
     static let showCPU = "showCPU"
+    static let showNowPlaying = "showNowPlaying"
 }
 
 // Default settings, used on first launch and by Reset to Defaults
@@ -35,6 +36,7 @@ enum SettingDefaults {
     static let showBezel = true
     static let themeName = "Phosphor"
     static let showCPU = false
+    static let showNowPlaying = true
 }
 
 class CaptureManager: NSObject, ObservableObject {
